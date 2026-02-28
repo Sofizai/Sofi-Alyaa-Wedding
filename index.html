@@ -319,10 +319,10 @@
         }
     </style>
 </head>
-<body>
+<body onclick="playAudioOnce()">
     
     <div class="music-player">
-        <audio id="music" autoplay loop controls>
+        <audio id="music" loop>
             <source src="The Fate of Ophelia.mp3" type="audio/mp3"> 
             Your browser does not support the audio element.
         </audio>
@@ -449,7 +449,7 @@
         <div class="info-block-container fade-in-section">
             <h2 class="salam-kaut-title">Salam Kaut</h2>
             <p class="guestbook-subtitle">Hadiah Digital</p>
-            <p class="guestbook-message">Kehadiran anda adalah hadiah terindah bagi kami. Penghargaan dengan penuh ikhlas atas segala sumbangan.Anda boleh imbas kod QR di bawah:</p>
+            <p class="guestbook-message">Kehadiran anda adalah hadiah terindah bagi kami. Penghargaan dengan penuh ikhlas atas segala sumbangan. Anda boleh imbas kod QR di bawah:</p>
             
             <div class="qr-placeholder">
                 <img src="qr-code.jpg" alt="DuitNow QR Code">
@@ -467,7 +467,17 @@
     <div class="final-footer">&copy; 2026 Sofi & Alyaa.</div>
 
     <script>
-        // --- 1. SCROLL REVEAL ---
+        // --- 1. AUTOPLAY WORKAROUND (Triggered by any click/tap) ---
+        let audioPlayed = false;
+        function playAudioOnce() {
+            if (!audioPlayed) {
+                const audio = document.getElementById('music');
+                audio.play().catch(e => console.log("Autoplay blocked, waiting for interaction."));
+                audioPlayed = true;
+            }
+        }
+
+        // --- 2. SCROLL REVEAL ---
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('visible');
@@ -475,7 +485,7 @@
         }, { threshold: 0.1 });
         document.querySelectorAll('.fade-in-section').forEach(s => observer.observe(s));
 
-        // --- 2. COUNTDOWN ---
+        // --- 3. COUNTDOWN ---
         const targetDate = new Date("March 28, 2026 18:00:00").getTime();
         setInterval(() => {
             const now = new Date().getTime();
@@ -486,7 +496,7 @@
             document.getElementById("seconds").innerText = Math.max(0, Math.floor((diff % 60000) / 1000)).toString().padStart(2, '0');
         }, 1000);
 
-        // --- 3. COPY ACCOUNT ---
+        // --- 4. COPY ACCOUNT ---
         function copyAccount() {
             const accNum = document.getElementById("acc-number").innerText;
             navigator.clipboard.writeText(accNum).then(() => {
@@ -494,7 +504,7 @@
             });
         }
 
-        // --- 4. WISHES LOGIC ---
+        // --- 5. WISHES LOGIC ---
         let currentIdx = 0;
         let wishes = [];
         let autoPlayInterval;
